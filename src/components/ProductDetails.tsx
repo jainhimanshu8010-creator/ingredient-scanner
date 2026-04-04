@@ -85,6 +85,13 @@ export function ProductDetails({ product, ingredients, onBack }: ProductDetailsP
               </div>
             )}
           </div>
+
+          <div className="border-t border-gray-200 mt-6 pt-4">
+            <p className="text-xs text-gray-500 italic text-center">
+              <span className="block mb-1">Note:</span>
+              Measurements displayed in teaspoons • 1 teaspoon = 5ml
+            </p>
+          </div>
         </div>
       </div>
     </div>
