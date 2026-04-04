@@ -1,14 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BarcodeScanner } from './components/BarcodeScanner';
 import { ProductDetails } from './components/ProductDetails';
-import { supabase, Product, Ingredient } from './lib/supabase';
-import { Loader2 } from 'lucide-react';
+import { LoginPage } from './components/LoginPage';
+import { supabase, Product, Ingredient, User } from './lib/supabase';
+import { Loader2, LogOut } from 'lucide-react';
 
 function App() {
+  const [user, setUser] = useState<User | null>(null);
   const [product, setProduct] = useState<Product | null>(null);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (sessionData.session?.user) {
+          const { data: userData } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', sessionData.session.user.id)
+            .single();
+          if (userData) {
+            setUser(userData);
+          }
+        }
+      } catch (err) {
+        console.error('Error checking session:', err);
+      } finally {
+        setAuthLoading(false);
+      }
+    })();
+  }, []);
 
   const handleScanSuccess = async (barcode: string) => {
     setLoading(true);
@@ -56,16 +81,45 @@ function App() {
     setError(null);
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+        <Loader2 className="animate-spin text-blue-600" size={48} />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <LoginPage onLoginSuccess={setUser} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            Ingredient Scanner
-          </h1>
-          <p className="text-gray-600">
-            Scan any product barcode to see its ingredients and quantities
-          </p>
+        <div className="flex justify-between items-center mb-8">
+          <div className="text-center flex-1">
+            <h1 className="text-4xl font-bold text-gray-800 mb-2">
+              Ingredient Scanner
+            </h1>
+            <p className="text-gray-600">
+              Scan any product barcode to see its ingredients and quantities
+            </p>
+          </div>
+          <div className="flex flex-col items-end gap-2">
+            <p className="text-sm text-gray-700 font-medium">{user.name}</p>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-3 py-1 text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg transition"
+            >
+              <LogOut size={16} />
+              Logout
+            </button>
+          </div>
         </div>
 
         {loading && (

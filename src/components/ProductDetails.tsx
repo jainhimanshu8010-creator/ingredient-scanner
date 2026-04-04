@@ -37,24 +37,26 @@ export function ProductDetails({ product, ingredients, onBack }: ProductDetailsP
             </p>
           </div>
 
-          <div className="flex items-start gap-4 mb-6">
-            {product.image_url ? (
-              <img
-                src={product.image_url}
-                alt={product.name}
-                className="w-24 h-24 object-cover rounded-lg"
-              />
-            ) : (
-              <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center">
-                <Package size={40} className="text-gray-400" />
-              </div>
-            )}
-            <div className="flex-1">
-              <h3 className="text-2xl font-bold text-gray-800 mb-1">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div className="md:col-span-1 flex justify-center">
+              {product.image_url ? (
+                <img
+                  src={product.image_url}
+                  alt={product.name}
+                  className="w-full max-w-xs h-auto object-cover rounded-lg shadow-md"
+                />
+              ) : (
+                <div className="w-full max-w-xs aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
+                  <Package size={64} className="text-gray-400" />
+                </div>
+              )}
+            </div>
+            <div className="md:col-span-2 flex flex-col justify-center">
+              <h3 className="text-3xl font-bold text-gray-800 mb-3">
                 {product.name}
               </h3>
               {product.brand && (
-                <p className="text-gray-600 mb-2">Brand: {product.brand}</p>
+                <p className="text-lg text-gray-600 mb-3">Brand: {product.brand}</p>
               )}
               <p className="text-sm text-gray-500">Barcode: {product.barcode}</p>
             </div>

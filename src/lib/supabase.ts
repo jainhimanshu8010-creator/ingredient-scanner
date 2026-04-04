@@ -22,3 +22,12 @@ export type Ingredient = {
   order_index: number;
   created_at: string;
 };
+
+export type User = {
+  id: string;
+  name: string;
+  age: number;
+  city: string;
+  category: 'dietician' | 'gym_freak' | 'adult' | 'student';
+  created_at: string;
+};
