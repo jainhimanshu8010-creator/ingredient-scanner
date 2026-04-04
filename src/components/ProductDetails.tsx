@@ -30,6 +30,13 @@ export function ProductDetails({ product, ingredients, onBack }: ProductDetailsP
         </div>
 
         <div className="p-6">
+          <div className="bg-blue-50 rounded-lg p-3 mb-6 border border-blue-200">
+            <p className="text-xs text-blue-700 italic text-center">
+              <span className="block font-semibold mb-1">Measurement Note:</span>
+              Ingredient quantities measured in teaspoons · Standard conversion: 1 tsp = 5ml
+            </p>
+          </div>
+
           <div className="flex items-start gap-4 mb-6">
             {product.image_url ? (
               <img
@@ -84,13 +91,6 @@ export function ProductDetails({ product, ingredients, onBack }: ProductDetailsP
                 No ingredients information available for this product.
               </div>
             )}
-          </div>
-
-          <div className="border-t border-gray-200 mt-6 pt-4">
-            <p className="text-xs text-gray-500 italic text-center">
-              <span className="block mb-1">Note:</span>
-              Measurements displayed in teaspoons • 1 teaspoon = 5ml
-            </p>
           </div>
         </div>
       </div>
