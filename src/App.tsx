@@ -104,7 +104,7 @@ function App() {
         <div className="flex justify-between items-center mb-8">
           <div className="text-center flex-1">
             <h1 className="text-4xl font-bold text-gray-800 mb-2">
-              Ingredient Scanner
+              FOOD DECODE
             </h1>
             <p className="text-gray-600">
               Scan any product barcode to see its ingredients and quantities
