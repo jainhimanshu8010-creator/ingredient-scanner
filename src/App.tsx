@@ -107,7 +107,7 @@ function App() {
               FOOD DECODE
             </h1>
             <p className="text-gray-600">
-              Your food has secrets. We reveal them
+              Scan To Decode Your Food
             </p>
           </div>
           <div className="flex flex-col items-end gap-2">

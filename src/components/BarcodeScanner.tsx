@@ -71,7 +71,7 @@ export function BarcodeScanner({ onScanSuccess }: BarcodeScannerProps) {
     <div className="w-full max-w-md mx-auto">
       <div className="bg-white rounded-lg shadow-lg p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-          Scan Product Barcode
+          Scan To Decode Your Food
         </h2>
 
         {!isScanning ? (
@@ -81,7 +81,7 @@ export function BarcodeScanner({ onScanSuccess }: BarcodeScannerProps) {
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg flex items-center justify-center gap-3 transition"
             >
               <Camera size={24} />
-              Start Camera Scanner
+              Scan Now
             </button>
 
             <div className="relative">
@@ -105,7 +105,7 @@ export function BarcodeScanner({ onScanSuccess }: BarcodeScannerProps) {
                 type="submit"
                 className="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition"
               >
-                Search
+                Decode Product
               </button>
             </form>
           </div>
