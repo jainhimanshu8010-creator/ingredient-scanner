@@ -98,7 +98,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
               FOOD DECODE
             </h1>
             <p className="text-blue-100 text-center mt-2">
-              {isSignUp ? 'Create your account' : 'Sign in to your account'}
+              {isSignUp ? 'Join Food Decode - Eat Smarter Daily' : 'Sign in to your account'}
             </p>
           </div>
 
