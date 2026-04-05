@@ -107,7 +107,7 @@ function App() {
               FOOD DECODE
             </h1>
             <p className="text-gray-600">
-              Scan any product barcode to see its ingredients and quantities
+              Your food has secrets. We reveal them
             </p>
           </div>
           <div className="flex flex-col items-end gap-2">
