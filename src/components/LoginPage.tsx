@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supabase, User } from '../lib/supabase';
-import { Loader2, Apple, Leaf } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 type LoginPageProps = {
   onLoginSuccess: (user: User) => void;
@@ -98,13 +98,17 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
 
       <div className="w-full max-w-md relative z-10">
         <div className="bg-gradient-to-b from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-700/50">
-          <div className="relative px-6 py-10 bg-gradient-to-br from-emerald-600 to-emerald-700">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-            <div className="relative flex items-center justify-center gap-3 mb-3">
-              <Leaf className="text-white" size={32} />
-              <h1 className="text-4xl font-bold text-white">FOOD DECODE</h1>
+          <div className="relative px-6 py-10 bg-gradient-to-br from-slate-900 to-slate-950">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-emerald-600/10"></div>
+            <div className="relative flex flex-col items-center justify-center gap-4 mb-3">
+              <img
+                src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&h=200&fit=crop"
+                alt="Food Decode Logo"
+                className="w-20 h-20 object-cover rounded-full shadow-lg"
+              />
+              <h1 className="text-3xl font-bold text-white text-center">FOOD DECODE</h1>
             </div>
-            <p className="text-emerald-50 text-center font-light tracking-wide">
+            <p className="text-slate-300 text-center font-light tracking-wide">
               {isSignUp ? 'Join Food Decode - Eat Smarter Daily' : 'Welcome back'}
             </p>
           </div>

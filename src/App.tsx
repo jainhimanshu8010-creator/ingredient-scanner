@@ -107,10 +107,12 @@ function App() {
 
       <div className="max-w-4xl mx-auto relative z-10">
         <div className="flex justify-between items-center mb-12">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
-              <span className="text-xl font-bold text-white">FD</span>
-            </div>
+          <div className="flex items-center gap-4">
+            <img
+              src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&h=200&fit=crop"
+              alt="Food Decode Logo"
+              className="w-16 h-16 object-cover rounded-full shadow-lg"
+            />
             <div>
               <h1 className="text-3xl font-bold text-white">
                 FOOD DECODE
