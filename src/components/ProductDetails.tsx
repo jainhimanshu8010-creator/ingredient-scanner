@@ -1,6 +1,6 @@
 import { ArrowLeft, Package } from 'lucide-react';
 import { Product, Ingredient, User } from '../lib/supabase';
-import { HealthMeter } from './HealthMeter';
+import { AdvancedHealthMeter } from './AdvancedHealthMeter';
 
 interface ProductDetailsProps {
   product: Product;
@@ -79,7 +79,7 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
 
           {product.health_score !== null && (
             <div className="mb-8">
-              <HealthMeter
+              <AdvancedHealthMeter
                 healthScore={product.health_score}
                 sugarContent={product.sugar_content || 0}
                 caffeineLevel={product.caffeine_level || 'none'}
