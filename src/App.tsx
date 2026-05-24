@@ -167,6 +167,7 @@ function App() {
             product={product}
             ingredients={ingredients}
             onBack={handleBack}
+            user={user}
           />
         )}
       </div>

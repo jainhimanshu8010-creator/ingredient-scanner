@@ -11,6 +11,11 @@ export type Product = {
   name: string;
   brand: string | null;
   image_url: string | null;
+  price: number | null;
+  sugar_content: number | null;
+  caffeine_level: 'none' | 'low' | 'medium' | 'high' | null;
+  health_category: string | null;
+  health_score: number | null;
   created_at: string;
 };
 

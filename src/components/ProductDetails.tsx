@@ -1,13 +1,15 @@
 import { ArrowLeft, Package } from 'lucide-react';
-import { Product, Ingredient } from '../lib/supabase';
+import { Product, Ingredient, User } from '../lib/supabase';
+import { HealthMeter } from './HealthMeter';
 
 interface ProductDetailsProps {
   product: Product;
   ingredients: Ingredient[];
   onBack: () => void;
+  user: User;
 }
 
-export function ProductDetails({ product, ingredients, onBack }: ProductDetailsProps) {
+export function ProductDetails({ product, ingredients, onBack, user }: ProductDetailsProps) {
   const totalTablespoons = ingredients.reduce(
     (sum, ing) => sum + Number(ing.quantity_tablespoons),
     0
@@ -60,12 +62,32 @@ export function ProductDetails({ product, ingredients, onBack }: ProductDetailsP
               {product.brand && (
                 <p className="text-lg text-emerald-400 font-semibold mb-3">{product.brand}</p>
               )}
-              <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
-                <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Barcode</p>
-                <p className="text-slate-200 font-mono">{product.barcode}</p>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
+                  <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Barcode</p>
+                  <p className="text-slate-200 font-mono text-sm">{product.barcode}</p>
+                </div>
+                {product.price && (
+                  <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
+                    <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Price</p>
+                    <p className="text-emerald-300 font-bold text-lg">₹{product.price.toFixed(2)}</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
+
+          {product.health_score !== null && (
+            <div className="mb-8">
+              <HealthMeter
+                healthScore={product.health_score}
+                sugarContent={product.sugar_content || 0}
+                caffeineLevel={product.caffeine_level || 'none'}
+                userAge={user.age}
+                productCategory={product.health_category || 'beverage'}
+              />
+            </div>
+          )}
 
           <div className="border-t border-slate-700 pt-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
