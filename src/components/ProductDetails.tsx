@@ -1,6 +1,8 @@
-import { ArrowLeft, Package } from 'lucide-react';
+import { ArrowLeft, Package, Sparkles, Heart, CheckCircle, ArrowRight } from 'lucide-react';
 import { Product, Ingredient, User } from '../lib/supabase';
 import { AdvancedHealthMeter } from './AdvancedHealthMeter';
+import { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 
 interface ProductDetailsProps {
   product: Product;
@@ -9,13 +11,98 @@ interface ProductDetailsProps {
   user: User;
 }
 
+interface HealthyAlternative {
+  id: string;
+  unhealthy_product_category: string;
+  alternative_product_name: string;
+  alternative_brand: string | null;
+  alternative_image_url: string | null;
+  health_score: number;
+  sugar_content: number;
+  caffeine_level: string;
+  benefits: string[];
+  suitable_for_ages: string[];
+}
+
 export function ProductDetails({ product, ingredients, onBack, user }: ProductDetailsProps) {
+  const [alternatives, setAlternatives] = useState<HealthyAlternative[]>([]);
+  const [loadingAlternatives, setLoadingAlternatives] = useState(false);
+
   const totalTablespoons = ingredients.reduce(
     (sum, ing) => sum + Number(ing.quantity_tablespoons),
     0
   );
 
   const convertToTeaspoons = (tablespoons: number) => tablespoons * 3;
+
+  const getAgeGroup = (age: number) => {
+    if (age < 13) return 'child';
+    if (age < 18) return 'student';
+    if (age < 60) return 'adult';
+    return 'senior';
+  };
+
+  const calculateAdjustedScore = () => {
+    if (product.health_score === null) return null;
+
+    let adjustedScore = product.health_score;
+    const ageGroup = getAgeGroup(user.age);
+    const caffeineLevel = product.caffeine_level || 'none';
+    const sugarContent = product.sugar_content || 0;
+
+    if (caffeineLevel === 'high') {
+      if (ageGroup === 'child') adjustedScore -= 25;
+      else if (ageGroup === 'student') adjustedScore -= 10;
+      else if (ageGroup === 'senior') adjustedScore -= 15;
+    } else if (caffeineLevel === 'medium') {
+      if (ageGroup === 'child') adjustedScore -= 15;
+    }
+
+    if (sugarContent > 50) {
+      adjustedScore -= ageGroup === 'child' ? 30 : 15;
+    } else if (sugarContent > 30) {
+      adjustedScore -= ageGroup === 'child' ? 20 : 10;
+    } else if (sugarContent > 10) {
+      adjustedScore -= 5;
+    }
+
+    return Math.max(1, Math.min(100, adjustedScore));
+  };
+
+  const adjustedScore = calculateAdjustedScore();
+  const isUnhealthy = adjustedScore !== null && adjustedScore < 60;
+  const ageGroup = getAgeGroup(user.age);
+
+  useEffect(() => {
+    if (isUnhealthy) {
+      fetchHealthyAlternatives();
+    }
+  }, [isUnhealthy, product.health_category]);
+
+  const fetchHealthyAlternatives = async () => {
+    setLoadingAlternatives(true);
+    try {
+      const category = product.health_category || 'beverage';
+
+      const { data, error } = await supabase
+        .from('healthy_alternatives')
+        .select('*')
+        .eq('unhealthy_product_category', category)
+        .limit(3);
+
+      if (error) throw error;
+
+      const filtered = (data || []).filter((alt: HealthyAlternative) =>
+        alt.suitable_for_ages.includes(ageGroup)
+      );
+
+      setAlternatives(filtered.slice(0, 3));
+    } catch (err) {
+      console.error('Error fetching alternatives:', err);
+    } finally {
+      setLoadingAlternatives(false);
+    }
+  };
 
   return (
     <div className="w-full max-w-2xl mx-auto">
@@ -37,7 +124,7 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
           <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 mb-8">
             <p className="text-xs text-emerald-300 text-center">
               <span className="block font-semibold mb-1">Measurement Note</span>
-              Ingredient quantities measured in teaspoons · Standard conversion: 1 tsp = 5ml
+              Ingredient quantities measured in teaspoons - Standard conversion: 1 tsp = 5ml
             </p>
           </div>
 
@@ -86,6 +173,89 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
                 userAge={user.age}
                 productCategory={product.health_category || 'beverage'}
               />
+            </div>
+          )}
+
+          {isUnhealthy && !loadingAlternatives && alternatives.length > 0 && (
+            <div className="mb-8">
+              <div className="bg-gradient-to-r from-blue-500/15 to-emerald-500/15 border border-emerald-500/40 rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-5">
+                  <Sparkles size={24} className="text-emerald-400" />
+                  <div>
+                    <h4 className="text-lg font-bold text-white">Healthier Alternatives</h4>
+                    <p className="text-xs text-slate-400">Based on your age and health profile</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {alternatives.map((alt, index) => (
+                    <div
+                      key={alt.id}
+                      className="bg-slate-800/60 border border-slate-600 hover:border-emerald-500/50 rounded-xl p-5 transition duration-300 group"
+                    >
+                      <div className="flex gap-4">
+                        {alt.alternative_image_url && (
+                          <div className="flex-shrink-0">
+                            <img
+                              src={alt.alternative_image_url}
+                              alt={alt.alternative_product_name}
+                              className="w-24 h-24 object-cover rounded-lg shadow-md"
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between mb-2">
+                            <div>
+                              <p className="text-xs text-emerald-400 font-semibold uppercase tracking-wider mb-1">
+                                Alternative #{index + 1}
+                              </p>
+                              <h5 className="text-base font-bold text-white">
+                                {alt.alternative_product_name}
+                              </h5>
+                              {alt.alternative_brand && (
+                                <p className="text-sm text-slate-400">{alt.alternative_brand}</p>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/40 rounded-lg px-3 py-1">
+                              <Heart size={14} className="text-emerald-400" />
+                              <span className="text-sm font-bold text-emerald-300">{alt.health_score}%</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3 mb-3 flex-wrap">
+                            <div className="flex items-center gap-1 text-xs">
+                              <span className="text-slate-400">Sugar:</span>
+                              <span className="text-white font-semibold">{alt.sugar_content}g</span>
+                            </div>
+                            <div className="w-px h-4 bg-slate-600"></div>
+                            <div className="flex items-center gap-1 text-xs">
+                              <span className="text-slate-400">Caffeine:</span>
+                              <span className="text-white font-semibold capitalize">{alt.caffeine_level}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2">
+                            {alt.benefits.slice(0, 4).map((benefit, idx) => (
+                              <span
+                                key={idx}
+                                className="inline-flex items-center gap-1 text-xs bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 rounded-full px-2 py-0.5"
+                              >
+                                <CheckCircle size={10} />
+                                {benefit}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 flex items-center gap-2 text-slate-400 text-xs">
+                  <ArrowRight size={14} className="text-emerald-400" />
+                  <span>Swapping to these alternatives can improve your health score by {100 - (adjustedScore || 50)}%</span>
+                </div>
+              </div>
             </div>
           )}
 
