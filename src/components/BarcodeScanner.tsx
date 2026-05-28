@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { Camera, X, AlertCircle } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface BarcodeScannerProps {
   onScanSuccess: (barcode: string) => void;
 }
 
 export function BarcodeScanner({ onScanSuccess }: BarcodeScannerProps) {
+  const { t } = useLanguage();
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
@@ -37,12 +39,12 @@ export function BarcodeScanner({ onScanSuccess }: BarcodeScannerProps) {
       setIsScanning(true);
     } catch (err: any) {
       console.error('Camera error:', err);
-      let errorMsg = 'Unable to access camera. ';
+      let errorMsg = t('scanner.cameraError') + ' ';
 
       if (err.name === 'NotAllowedError') {
         errorMsg = 'Camera permission denied. Please allow camera access in your browser and retry.';
       } else if (err.name === 'NotFoundError') {
-        errorMsg = 'No camera found on this device may need to connect a camera or use manual entry.';
+        errorMsg = 'No camera found on this device. Please connect a camera or use manual entry.';
       } else if (err.name === 'NotReadableError') {
         errorMsg = 'Camera is in use by another app. Close other apps and retry.';
       } else if (err.name === 'SecurityError' || err.name === 'TypeError') {
@@ -94,10 +96,10 @@ export function BarcodeScanner({ onScanSuccess }: BarcodeScannerProps) {
       <div className="bg-gradient-to-b from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-700/50">
         <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 px-6 py-8">
           <h2 className="text-2xl font-bold text-white text-center">
-            Scan To Decode
+            {t('scanner.title')}
           </h2>
           <p className="text-emerald-100 text-center mt-2 text-sm">
-            Point your camera at a barcode
+            {t('scanner.subtitle')}
           </p>
         </div>
 
@@ -116,7 +118,7 @@ export function BarcodeScanner({ onScanSuccess }: BarcodeScannerProps) {
                 className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-5 px-6 rounded-lg flex items-center justify-center gap-3 transition duration-300 transform hover:scale-105 active:scale-95 shadow-lg"
               >
                 <Camera size={28} />
-                <span className="text-lg">Open Camera</span>
+                <span className="text-lg">{t('scanner.openCamera')}</span>
               </button>
 
               <div className="relative">
@@ -124,7 +126,7 @@ export function BarcodeScanner({ onScanSuccess }: BarcodeScannerProps) {
                   <div className="w-full border-t border-slate-600"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-slate-900 text-slate-400 font-medium">Or enter manually</span>
+                  <span className="px-2 bg-slate-900 text-slate-400 font-medium">{t('scanner.orManual')}</span>
                 </div>
               </div>
 
@@ -134,7 +136,7 @@ export function BarcodeScanner({ onScanSuccess }: BarcodeScannerProps) {
                     type="text"
                     value={manualBarcode}
                     onChange={(e) => setManualBarcode(e.target.value)}
-                    placeholder="Enter barcode number"
+                    placeholder={t('scanner.placeholder')}
                     className="w-full px-4 py-3.5 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-white placeholder-slate-400 transition duration-200"
                   />
                 </div>
@@ -142,7 +144,7 @@ export function BarcodeScanner({ onScanSuccess }: BarcodeScannerProps) {
                   type="submit"
                   className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3.5 px-6 rounded-lg transition duration-300 transform hover:scale-105 active:scale-95 shadow-lg"
                 >
-                  Decode Product
+                  {t('scanner.decodeProduct')}
                 </button>
               </form>
             </div>
@@ -150,7 +152,7 @@ export function BarcodeScanner({ onScanSuccess }: BarcodeScannerProps) {
             <div className="space-y-4">
               <div className="bg-blue-500/15 border border-blue-500/30 rounded-lg p-3">
                 <p className="text-xs text-blue-300 text-center">
-                  Hold steady - scanning for barcode...
+                  {t('scanner.scanning')}
                 </p>
               </div>
               <div id="reader" className="w-full rounded-xl overflow-hidden shadow-lg border border-slate-600 bg-slate-800 min-h-[280px]"></div>
@@ -159,7 +161,7 @@ export function BarcodeScanner({ onScanSuccess }: BarcodeScannerProps) {
                 className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition duration-300 transform hover:scale-105 active:scale-95 shadow-lg"
               >
                 <X size={20} />
-                Close Camera
+                {t('scanner.closeCamera')}
               </button>
             </div>
           )}

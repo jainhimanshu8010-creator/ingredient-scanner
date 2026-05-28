@@ -3,6 +3,7 @@ import { Product, Ingredient, User } from '../lib/supabase';
 import { AdvancedHealthMeter } from './AdvancedHealthMeter';
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ProductDetailsProps {
   product: Product;
@@ -26,6 +27,7 @@ interface HealthyAlternative {
 }
 
 export function ProductDetails({ product, ingredients, onBack, user }: ProductDetailsProps) {
+  const { t } = useLanguage();
   const [alternatives, setAlternatives] = useState<HealthyAlternative[]>([]);
   const [loadingAlternatives, setLoadingAlternatives] = useState(false);
 
@@ -124,20 +126,20 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
         className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition mb-6 font-semibold"
       >
         <ArrowLeft size={20} />
-        <span>Scan Another Product</span>
+        <span>{t('details.scanAnother')}</span>
       </button>
 
       <div className="bg-gradient-to-b from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-700/50">
         <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 px-6 py-8">
-          <h2 className="text-2xl font-bold text-white">Product Details</h2>
-          <p className="text-emerald-100 text-sm mt-1">Complete ingredient breakdown</p>
+          <h2 className="text-2xl font-bold text-white">{t('details.title')}</h2>
+          <p className="text-emerald-100 text-sm mt-1">{t('details.subtitle')}</p>
         </div>
 
         <div className="p-8">
           <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 mb-8">
             <p className="text-xs text-emerald-300 text-center">
-              <span className="block font-semibold mb-1">Measurement Note</span>
-              Ingredient quantities measured in teaspoons - Standard conversion: 1 tsp = 5ml
+              <span className="block font-semibold mb-1">{t('details.measurementNote')}</span>
+              {t('details.measurementDesc')}
             </p>
           </div>
 
@@ -164,12 +166,12 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
               )}
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
-                  <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Barcode</p>
+                  <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">{t('details.barcode')}</p>
                   <p className="text-slate-200 font-mono text-sm">{product.barcode}</p>
                 </div>
                 {product.price && (
                   <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
-                    <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Price</p>
+                    <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">{t('details.price')}</p>
                     <p className="text-emerald-300 font-bold text-lg">₹{product.price.toFixed(2)}</p>
                   </div>
                 )}
@@ -197,8 +199,8 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
                     <Leaf size={20} className="text-white" />
                   </div>
                   <div>
-                    <h4 className="text-lg font-bold text-white">Healthier Alternatives</h4>
-                    <p className="text-xs text-slate-400">Organic and natural products for better health</p>
+                    <h4 className="text-lg font-bold text-white">{t('alternatives.title')}</h4>
+                    <p className="text-xs text-slate-400">{t('alternatives.subtitle')}</p>
                   </div>
                 </div>
 
@@ -206,7 +208,7 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
                   <div className="mb-4 bg-red-500/15 border border-red-500/30 rounded-lg p-3 flex items-start gap-3">
                     <AlertTriangle size={18} className="text-red-400 flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-red-200">
-                      This product has a low health score ({adjustedScore}%). We recommend healthier alternatives below.
+                      {t('alternatives.unhealthyAlert')}
                     </p>
                   </div>
                 )}
@@ -215,7 +217,7 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
                   <div className="mb-4 bg-yellow-500/15 border border-yellow-500/30 rounded-lg p-3 flex items-start gap-3">
                     <AlertTriangle size={18} className="text-yellow-400 flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-yellow-200">
-                      This product has a moderate health score. Consider these healthier options to improve your diet.
+                      {t('alternatives.poorAlert')}
                     </p>
                   </div>
                 )}
@@ -261,12 +263,12 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
 
                           <div className="flex items-center gap-3 mb-3 flex-wrap">
                             <div className="flex items-center gap-1 text-xs">
-                              <span className="text-slate-400">Sugar:</span>
+                              <span className="text-slate-400">{t('alternatives.sugar')}:</span>
                               <span className="text-white font-semibold">{alt.sugar_content}g</span>
                             </div>
                             <div className="w-px h-4 bg-slate-600"></div>
                             <div className="flex items-center gap-1 text-xs">
-                              <span className="text-slate-400">Caffeine:</span>
+                              <span className="text-slate-400">{t('alternatives.caffeine')}:</span>
                               <span className="text-white font-semibold capitalize">{alt.caffeine_level}</span>
                             </div>
                             {adjustedScore && (
@@ -275,7 +277,7 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
                                 <div className="flex items-center gap-1 text-xs">
                                   <ArrowRight size={12} className="text-emerald-400" />
                                   <span className="text-emerald-300 font-semibold">
-                                    +{alt.health_score - adjustedScore}% boost
+                                    +{alt.health_score - adjustedScore}% {t('alternatives.boost')}
                                   </span>
                                 </div>
                               </>
@@ -302,7 +304,7 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
                 <div className="mt-5 pt-4 border-t border-slate-600 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-xs text-slate-400">
                     <Sparkles size={14} className="text-emerald-400" />
-                    <span>Switching to these alternatives can improve your health by {adjustedScore ? Math.min(40, 100 - adjustedScore) : 40}%</span>
+                    <span>{t('alternatives.improvement')} {adjustedScore ? Math.min(40, 100 - adjustedScore) : 40}%</span>
                   </div>
                 </div>
               </div>
@@ -317,10 +319,10 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
 
           <div className="border-t border-slate-700 pt-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-              <h4 className="text-xl font-bold text-white">Ingredients</h4>
+              <h4 className="text-xl font-bold text-white">{t('details.ingredients')}</h4>
               <div className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 rounded-lg px-4 py-2">
-                <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Total Volume</p>
-                <p className="text-emerald-300 font-semibold">{convertToTeaspoons(totalTablespoons).toFixed(2)} teaspoons</p>
+                <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">{t('details.totalVolume')}</p>
+                <p className="text-emerald-300 font-semibold">{convertToTeaspoons(totalTablespoons).toFixed(2)} {t('details.teaspoons')}</p>
               </div>
             </div>
 
@@ -350,7 +352,7 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
             ) : (
               <div className="text-center py-12 text-slate-400">
                 <Package size={48} className="mx-auto mb-3 text-slate-500" />
-                <p className="text-sm">No ingredients information available for this product</p>
+                <p className="text-sm">{t('details.noIngredients')}</p>
               </div>
             )}
           </div>

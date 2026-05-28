@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { supabase, User } from '../lib/supabase';
-import { Loader2 } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { Loader2, Leaf } from 'lucide-react';
+import { LanguageSelector } from './LanguageSelector';
 
 type LoginPageProps = {
   onLoginSuccess: (user: User) => void;
 };
 
 export function LoginPage({ onLoginSuccess }: LoginPageProps) {
+  const { t } = useLanguage();
   const [isSignUp, setIsSignUp] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -96,20 +99,22 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-2000"></div>
       </div>
 
+      <div className="absolute top-8 right-8 z-20">
+        <LanguageSelector />
+      </div>
+
       <div className="w-full max-w-md relative z-10">
         <div className="bg-gradient-to-b from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-700/50">
           <div className="relative px-6 py-10 bg-gradient-to-br from-slate-900 to-slate-950">
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-emerald-600/10"></div>
             <div className="relative flex flex-col items-center justify-center gap-4 mb-3">
-              <img
-                src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&h=200&fit=crop"
-                alt="Food Decode Logo"
-                className="w-20 h-20 object-cover rounded-full shadow-lg"
-              />
-              <h1 className="text-3xl font-bold text-white text-center">FOOD DECODE</h1>
+              <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full p-4 shadow-2xl">
+                <Leaf className="w-12 h-12 text-white" />
+              </div>
+              <h1 className="text-3xl font-bold text-white text-center">{t('app.title')}</h1>
             </div>
             <p className="text-slate-300 text-center font-light tracking-wide">
-              {isSignUp ? 'Join Food Decode - Eat Smarter Daily' : 'Welcome back'}
+              {t('login.subtitle')}
             </p>
           </div>
 
@@ -119,14 +124,14 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
                 <>
                   <div className="group">
                     <label className="block text-xs font-semibold text-slate-300 mb-2 uppercase tracking-wider">
-                      Full Name
+                      {t('login.name')}
                     </label>
                     <input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-white placeholder-slate-400 transition duration-200"
-                      placeholder="John Doe"
+                      placeholder={t('login.namePlaceholder')}
                       disabled={loading}
                     />
                   </div>
@@ -134,7 +139,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="group">
                       <label className="block text-xs font-semibold text-slate-300 mb-2 uppercase tracking-wider">
-                        Age
+                        {t('login.age')}
                       </label>
                       <input
                         type="number"
@@ -147,14 +152,14 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
                     </div>
                     <div className="group">
                       <label className="block text-xs font-semibold text-slate-300 mb-2 uppercase tracking-wider">
-                        City
+                        {t('login.city')}
                       </label>
                       <input
                         type="text"
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
                         className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-white placeholder-slate-400 transition duration-200"
-                        placeholder="New York"
+                        placeholder={t('login.cityPlaceholder')}
                         disabled={loading}
                       />
                     </div>
@@ -162,7 +167,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
 
                   <div className="group">
                     <label className="block text-xs font-semibold text-slate-300 mb-2 uppercase tracking-wider">
-                      I am a
+                      {t('login.category')}
                     </label>
                     <select
                       value={category}
@@ -170,10 +175,10 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
                       className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-white placeholder-slate-400 transition duration-200"
                       disabled={loading}
                     >
-                      <option value="dietician">Dietician</option>
-                      <option value="gym_freak">Fitness Enthusiast</option>
-                      <option value="adult">Health Conscious Adult</option>
-                      <option value="student">Student</option>
+                      <option value="dietician">{t('login.category.dietician')}</option>
+                      <option value="gym_freak">{t('login.category.gym_freak')}</option>
+                      <option value="adult">{t('login.category.adult')}</option>
+                      <option value="student">{t('login.category.student')}</option>
                     </select>
                   </div>
                 </>
@@ -219,7 +224,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
                 className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-slate-600 disabled:to-slate-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg"
               >
                 {loading && <Loader2 size={18} className="animate-spin" />}
-                {isSignUp ? 'Join Food Decode' : 'Sign In'}
+                {isSignUp ? t('login.start') : 'Sign In'}
               </button>
             </form>
 

@@ -10,6 +10,7 @@ import {
   AlertTriangle,
   Info,
 } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface AdvancedHealthMeterProps {
   healthScore: number;
@@ -26,6 +27,8 @@ export function AdvancedHealthMeter({
   userAge,
   productCategory,
 }: AdvancedHealthMeterProps) {
+  const { t } = useLanguage();
+
   const getAgeGroup = (age: number) => {
     if (age < 13) return 'child';
     if (age < 18) return 'student';
@@ -77,8 +80,7 @@ export function AdvancedHealthMeter({
 
     if (overallScore >= 80) {
       return {
-        status: 'Excellent',
-        emoji: '🌟',
+        status: t('health.excellent'),
         color: 'from-green-500 to-emerald-600',
         bgColor: 'bg-green-500/15',
         borderColor: 'border-green-500/40',
@@ -87,8 +89,7 @@ export function AdvancedHealthMeter({
       };
     } else if (overallScore >= 60) {
       return {
-        status: 'Good',
-        emoji: '👍',
+        status: t('health.good'),
         color: 'from-blue-500 to-blue-600',
         bgColor: 'bg-blue-500/15',
         borderColor: 'border-blue-500/40',
@@ -97,8 +98,7 @@ export function AdvancedHealthMeter({
       };
     } else if (overallScore >= 40) {
       return {
-        status: 'Fair',
-        emoji: '⚠️',
+        status: t('health.fair'),
         color: 'from-yellow-500 to-orange-600',
         bgColor: 'bg-yellow-500/15',
         borderColor: 'border-yellow-500/40',
@@ -107,8 +107,7 @@ export function AdvancedHealthMeter({
       };
     } else {
       return {
-        status: 'Poor',
-        emoji: '❌',
+        status: t('health.poor'),
         color: 'from-red-500 to-red-600',
         bgColor: 'bg-red-500/15',
         borderColor: 'border-red-500/40',
@@ -209,15 +208,24 @@ export function AdvancedHealthMeter({
   const recommendations = getAgeSpecificRecommendations();
   const benefits = getHealthBenefits();
 
+  const getAgeLabel = () => {
+    switch (ageGroup) {
+      case 'child': return t('age.children');
+      case 'student': return t('age.students');
+      case 'adult': return t('age.adults');
+      case 'senior': return t('age.seniors');
+      default: return ageGroup;
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className={`${healthStatus.bgColor} border ${healthStatus.borderColor} rounded-2xl p-8 backdrop-blur-sm transition-all duration-500`}>
         <div className="flex items-start justify-between mb-6">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-3xl">{healthStatus.emoji}</span>
               <div>
-                <p className="text-sm text-slate-400">Overall Health Rating</p>
+                <p className="text-sm text-slate-400">{t('health.overall')}</p>
                 <h3 className={`text-3xl font-bold ${healthStatus.textColor}`}>
                   {healthStatus.status}
                 </h3>
@@ -225,7 +233,7 @@ export function AdvancedHealthMeter({
             </div>
           </div>
           <div className="text-right">
-            <p className="text-slate-400 text-xs mb-1">Score for {ageGroup}s</p>
+            <p className="text-slate-400 text-xs mb-1">{t('health.score')} {getAgeLabel()}</p>
             <p className={`text-4xl font-bold ${healthStatus.textColor}`}>
               {metrics.overallScore}%
             </p>
@@ -244,7 +252,7 @@ export function AdvancedHealthMeter({
           <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
             <div className="flex items-center gap-2 mb-2">
               <Zap size={16} className={caffeineRiskInfo.color} />
-              <span className="text-xs text-slate-400 font-semibold">Caffeine</span>
+              <span className="text-xs text-slate-400 font-semibold">{t('health.caffeine')}</span>
             </div>
             <p className="font-bold text-white capitalize text-sm mb-1">
               {caffeineLevel || 'None'}
@@ -257,7 +265,7 @@ export function AdvancedHealthMeter({
           <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
             <div className="flex items-center gap-2 mb-2">
               <Droplet size={16} className={sugarRiskInfo.color} />
-              <span className="text-xs text-slate-400 font-semibold">Sugar</span>
+              <span className="text-xs text-slate-400 font-semibold">{t('health.sugar')}</span>
             </div>
             <p className="font-bold text-white text-sm mb-1">
               {sugarContent}g
@@ -270,7 +278,7 @@ export function AdvancedHealthMeter({
           <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
             <div className="flex items-center gap-2 mb-2">
               <Leaf size={16} className="text-green-400" />
-              <span className="text-xs text-slate-400 font-semibold">Category</span>
+              <span className="text-xs text-slate-400 font-semibold">{t('health.category')}</span>
             </div>
             <p className="font-bold text-white capitalize text-sm">
               {productCategory.replace('_', ' ')}
@@ -281,7 +289,7 @@ export function AdvancedHealthMeter({
         <div className="border-t border-slate-600/50 pt-6">
           <div className="flex items-center gap-2 mb-4">
             <Shield size={18} className="text-blue-400" />
-            <h4 className="text-sm font-bold text-white">Age-Specific Benefits</h4>
+            <h4 className="text-sm font-bold text-white">{t('health.benefits')}</h4>
           </div>
           <div className="space-y-2">
             {benefits.map((benefit, idx) => (
@@ -298,7 +306,7 @@ export function AdvancedHealthMeter({
         <div className="flex items-center gap-2 mb-4">
           <AlertTriangle size={18} className="text-amber-400" />
           <h4 className="text-sm font-bold text-white">
-            Recommendations for {ageGroup}s
+            {t('health.recommendations')} {getAgeLabel()}
           </h4>
         </div>
         <div className="space-y-2">
@@ -315,11 +323,9 @@ export function AdvancedHealthMeter({
         <div className="bg-red-500/15 border border-red-500/40 rounded-2xl p-6 backdrop-blur-sm flex gap-4">
           <AlertTriangle size={20} className="text-red-400 flex-shrink-0 mt-1" />
           <div>
-            <h4 className="text-sm font-bold text-red-300 mb-1">Health Alert</h4>
+            <h4 className="text-sm font-bold text-red-300 mb-1">{t('health.alert')}</h4>
             <p className="text-sm text-slate-300">
-              This product may not be suitable for {ageGroup}s due to{' '}
-              {metrics.caffeineRisk === 'critical' ? 'high caffeine' : 'high sugar'} content.
-              Consider healthier alternatives or consult a healthcare provider.
+              {t('health.alertDesc')}
             </p>
           </div>
         </div>
@@ -328,8 +334,7 @@ export function AdvancedHealthMeter({
       <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-4 backdrop-blur-sm flex gap-3">
         <Info size={16} className="text-slate-400 flex-shrink-0 mt-0.5" />
         <p className="text-xs text-slate-400">
-          This health assessment is based on product composition and general age-group health guidelines.
-          Individual health needs may vary. Consult healthcare professionals for personalized advice.
+          {t('health.disclaimer')}
         </p>
       </div>
     </div>

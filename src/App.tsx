@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import { BarcodeScanner } from './components/BarcodeScanner';
 import { ProductDetails } from './components/ProductDetails';
 import { LoginPage } from './components/LoginPage';
+import { LanguageSelector } from './components/LanguageSelector';
 import { supabase, Product, Ingredient, User } from './lib/supabase';
-import { Loader2, LogOut } from 'lucide-react';
+import { useLanguage } from './contexts/LanguageContext';
+import { Loader2, LogOut, Leaf } from 'lucide-react';
 
 function App() {
+  const { t } = useLanguage();
   const [user, setUser] = useState<User | null>(null);
   const [product, setProduct] = useState<Product | null>(null);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
@@ -49,7 +52,7 @@ function App() {
       if (productError) throw productError;
 
       if (!productData) {
-        setError(`Product with barcode "${barcode}" not found in our database.`);
+        setError(t('common.notFound') + ' ' + t('common.tryManual'));
         setProduct(null);
         setIngredients([]);
         setLoading(false);
@@ -67,7 +70,7 @@ function App() {
       setIngredients(ingredientsData || []);
     } catch (err) {
       console.error('Error fetching product:', err);
-      setError('An error occurred while fetching product data.');
+      setError(t('common.error'));
       setProduct(null);
       setIngredients([]);
     } finally {
@@ -108,28 +111,27 @@ function App() {
       <div className="max-w-4xl mx-auto relative z-10">
         <div className="flex justify-between items-center mb-12">
           <div className="flex items-center gap-4">
-            <img
-              src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&h=200&fit=crop"
-              alt="Food Decode Logo"
-              className="w-16 h-16 object-cover rounded-full shadow-lg"
-            />
+            <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full p-3 shadow-2xl">
+              <Leaf className="w-10 h-10 text-white" />
+            </div>
             <div>
               <h1 className="text-3xl font-bold text-white">
-                FOOD DECODE
+                {t('app.title')}
               </h1>
               <p className="text-emerald-400 text-sm font-light">
-                Scan To Decode Your Food
+                {t('app.subtitle')}
               </p>
             </div>
           </div>
           <div className="flex flex-col items-end gap-3">
-            <div>
-              <p className="text-slate-300 text-sm">Welcome back</p>
+            <LanguageSelector />
+            <div className="text-right">
+              <p className="text-slate-300 text-xs">Welcome back</p>
               <p className="text-white font-semibold">{user.name}</p>
             </div>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 text-sm bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg transition duration-300 transform hover:scale-105 active:scale-95 shadow-lg"
+              className="flex items-center gap-2 px-4 py-2 text-sm bg-gradient-to-r from-red-500/80 to-red-600/80 hover:from-red-600 hover:to-red-700 text-white rounded-lg transition duration-300 transform hover:scale-105 active:scale-95 shadow-lg border border-red-400/30"
             >
               <LogOut size={16} />
               Logout
@@ -142,7 +144,7 @@ function App() {
             <div className="relative w-16 h-16 mb-4">
               <Loader2 className="animate-spin text-emerald-500 absolute inset-0" size={64} />
             </div>
-            <p className="text-slate-300">Loading product information...</p>
+            <p className="text-slate-300">{t('common.loading')}</p>
           </div>
         )}
 
