@@ -1,4 +1,4 @@
-import { ArrowLeft, Package, Sparkles, Heart, CheckCircle, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Package, Sparkles, Heart, CheckCircle, ArrowRight, Leaf, AlertTriangle } from 'lucide-react';
 import { Product, Ingredient, User } from '../lib/supabase';
 import { AdvancedHealthMeter } from './AdvancedHealthMeter';
 import { useState, useEffect } from 'react';
@@ -14,6 +14,7 @@ interface ProductDetailsProps {
 interface HealthyAlternative {
   id: string;
   unhealthy_product_category: string;
+  related_product_barcode: string | null;
   alternative_product_name: string;
   alternative_brand: string | null;
   alternative_image_url: string | null;
@@ -71,28 +72,40 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
 
   const adjustedScore = calculateAdjustedScore();
   const isUnhealthy = adjustedScore !== null && adjustedScore < 60;
+  const isPoor = adjustedScore !== null && adjustedScore >= 60 && adjustedScore < 75;
+  const showAlternatives = isUnhealthy || isPoor;
   const ageGroup = getAgeGroup(user.age);
 
   useEffect(() => {
-    if (isUnhealthy) {
+    if (showAlternatives) {
       fetchHealthyAlternatives();
     }
-  }, [isUnhealthy, product.health_category]);
+  }, [showAlternatives, product.health_category, product.barcode]);
 
   const fetchHealthyAlternatives = async () => {
     setLoadingAlternatives(true);
     try {
+      const barcode = product.barcode;
       const category = product.health_category || 'beverage';
 
-      const { data, error } = await supabase
+      const { data: barcodeAlternatives, error: error1 } = await supabase
         .from('healthy_alternatives')
         .select('*')
-        .eq('unhealthy_product_category', category)
-        .limit(3);
+        .eq('related_product_barcode', barcode);
 
-      if (error) throw error;
+      let results = barcodeAlternatives || [];
 
-      const filtered = (data || []).filter((alt: HealthyAlternative) =>
+      if (results.length === 0) {
+        const { data: categoryAlternatives, error: error2 } = await supabase
+          .from('healthy_alternatives')
+          .select('*')
+          .eq('unhealthy_product_category', category);
+
+        if (error2) throw error2;
+        results = categoryAlternatives || [];
+      }
+
+      const filtered = results.filter((alt: HealthyAlternative) =>
         alt.suitable_for_ages.includes(ageGroup)
       );
 
@@ -176,22 +189,42 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
             </div>
           )}
 
-          {isUnhealthy && !loadingAlternatives && alternatives.length > 0 && (
+          {showAlternatives && !loadingAlternatives && alternatives.length > 0 && (
             <div className="mb-8">
-              <div className="bg-gradient-to-r from-blue-500/15 to-emerald-500/15 border border-emerald-500/40 rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-5">
-                  <Sparkles size={24} className="text-emerald-400" />
+              <div className="bg-gradient-to-br from-emerald-500/15 to-blue-500/15 border border-emerald-500/40 rounded-2xl p-6 shadow-xl">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full p-2">
+                    <Leaf size={20} className="text-white" />
+                  </div>
                   <div>
                     <h4 className="text-lg font-bold text-white">Healthier Alternatives</h4>
-                    <p className="text-xs text-slate-400">Based on your age and health profile</p>
+                    <p className="text-xs text-slate-400">Organic and natural products for better health</p>
                   </div>
                 </div>
 
-                <div className="space-y-4">
+                {isUnhealthy && (
+                  <div className="mb-4 bg-red-500/15 border border-red-500/30 rounded-lg p-3 flex items-start gap-3">
+                    <AlertTriangle size={18} className="text-red-400 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-red-200">
+                      This product has a low health score ({adjustedScore}%). We recommend healthier alternatives below.
+                    </p>
+                  </div>
+                )}
+
+                {isPoor && (
+                  <div className="mb-4 bg-yellow-500/15 border border-yellow-500/30 rounded-lg p-3 flex items-start gap-3">
+                    <AlertTriangle size={18} className="text-yellow-400 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-yellow-200">
+                      This product has a moderate health score. Consider these healthier options to improve your diet.
+                    </p>
+                  </div>
+                )}
+
+                <div className="space-y-4 mt-4">
                   {alternatives.map((alt, index) => (
                     <div
                       key={alt.id}
-                      className="bg-slate-800/60 border border-slate-600 hover:border-emerald-500/50 rounded-xl p-5 transition duration-300 group"
+                      className="bg-gradient-to-br from-slate-800/90 to-slate-800/70 border border-slate-600 hover:border-emerald-500/60 rounded-xl p-5 transition-all duration-300 group hover:shadow-lg hover:shadow-emerald-500/10"
                     >
                       <div className="flex gap-4">
                         {alt.alternative_image_url && (
@@ -199,26 +232,30 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
                             <img
                               src={alt.alternative_image_url}
                               alt={alt.alternative_product_name}
-                              className="w-24 h-24 object-cover rounded-lg shadow-md"
+                              className="w-24 h-24 object-cover rounded-lg shadow-md border border-slate-600 group-hover:border-emerald-500/40 transition"
                             />
                           </div>
                         )}
                         <div className="flex-1">
                           <div className="flex items-start justify-between mb-2">
                             <div>
-                              <p className="text-xs text-emerald-400 font-semibold uppercase tracking-wider mb-1">
-                                Alternative #{index + 1}
-                              </p>
-                              <h5 className="text-base font-bold text-white">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="bg-gradient-to-r from-emerald-500 to-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                                  #{index + 1}
+                                </span>
+                                {alt.alternative_brand && (
+                                  <span className="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider">
+                                    {alt.alternative_brand}
+                                  </span>
+                                )}
+                              </div>
+                              <h5 className="text-base font-bold text-white mb-1">
                                 {alt.alternative_product_name}
                               </h5>
-                              {alt.alternative_brand && (
-                                <p className="text-sm text-slate-400">{alt.alternative_brand}</p>
-                              )}
                             </div>
-                            <div className="flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/40 rounded-lg px-3 py-1">
+                            <div className="flex flex-col items-center gap-1 bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border border-emerald-500/40 rounded-lg px-3 py-2">
                               <Heart size={14} className="text-emerald-400" />
-                              <span className="text-sm font-bold text-emerald-300">{alt.health_score}%</span>
+                              <span className="text-base font-bold text-emerald-300">{alt.health_score}%</span>
                             </div>
                           </div>
 
@@ -232,15 +269,26 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
                               <span className="text-slate-400">Caffeine:</span>
                               <span className="text-white font-semibold capitalize">{alt.caffeine_level}</span>
                             </div>
+                            {adjustedScore && (
+                              <>
+                                <div className="w-px h-4 bg-slate-600"></div>
+                                <div className="flex items-center gap-1 text-xs">
+                                  <ArrowRight size={12} className="text-emerald-400" />
+                                  <span className="text-emerald-300 font-semibold">
+                                    +{alt.health_score - adjustedScore}% boost
+                                  </span>
+                                </div>
+                              </>
+                            )}
                           </div>
 
                           <div className="flex flex-wrap gap-2">
                             {alt.benefits.slice(0, 4).map((benefit, idx) => (
                               <span
                                 key={idx}
-                                className="inline-flex items-center gap-1 text-xs bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 rounded-full px-2 py-0.5"
+                                className="inline-flex items-center gap-1 text-xs bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-full px-2.5 py-1"
                               >
-                                <CheckCircle size={10} />
+                                <CheckCircle size={10} className="text-emerald-400" />
                                 {benefit}
                               </span>
                             ))}
@@ -251,11 +299,19 @@ export function ProductDetails({ product, ingredients, onBack, user }: ProductDe
                   ))}
                 </div>
 
-                <div className="mt-4 flex items-center gap-2 text-slate-400 text-xs">
-                  <ArrowRight size={14} className="text-emerald-400" />
-                  <span>Swapping to these alternatives can improve your health score by {100 - (adjustedScore || 50)}%</span>
+                <div className="mt-5 pt-4 border-t border-slate-600 flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs text-slate-400">
+                    <Sparkles size={14} className="text-emerald-400" />
+                    <span>Switching to these alternatives can improve your health by {adjustedScore ? Math.min(40, 100 - adjustedScore) : 40}%</span>
+                  </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {showAlternatives && loadingAlternatives && (
+            <div className="mb-8 flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
             </div>
           )}
 
