@@ -138,19 +138,26 @@ export function DietProfileForm({ userId, onProfileCreated, onCancel }: DietProf
                 Body Type (Dosha)
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {['vata', 'pitta', 'kapha', 'vata-pitta', 'pitta-kapha', 'vata-kapha'].map((type) => (
+                {[
+                  { value: 'vata', label: 'Vata (Air)' },
+                  { value: 'pitta', label: 'Pitta (Fire)' },
+                  { value: 'kapha', label: 'Kapha (Earth)' },
+                  { value: 'vata-pitta', label: 'Vata-Pitta' },
+                  { value: 'pitta-kapha', label: 'Pitta-Kapha' },
+                  { value: 'vata-kapha', label: 'Vata-Kapha' },
+                ].map(({ value, label }) => (
                   <button
-                    key={type}
+                    key={value}
                     type="button"
-                    onClick={() => setBodyType(type as any)}
+                    onClick={() => setBodyType(value as any)}
                     className={`px-4 py-3 rounded-lg font-semibold transition ${
-                      bodyType === type
+                      bodyType === value
                         ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border border-emerald-400'
                         : 'bg-slate-700/50 text-slate-300 border border-slate-600 hover:border-emerald-500/50'
                     }`}
                     disabled={loading}
                   >
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                    {label}
                   </button>
                 ))}
               </div>
@@ -209,19 +216,26 @@ export function DietProfileForm({ userId, onProfileCreated, onCancel }: DietProf
             <div className="bg-slate-700/30 border border-slate-600 rounded-xl p-5">
               <h3 className="text-lg font-semibold text-white mb-3">Dietary Restrictions</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {['vegetarian', 'vegan', 'gluten-free', 'dairy-free', 'nut-free', 'no-onion-garlic'].map((restriction) => (
+                {[
+                  { value: 'vegetarian', label: 'Vegetarian' },
+                  { value: 'vegan', label: 'Vegan' },
+                  { value: 'gluten-free', label: 'Gluten-Free' },
+                  { value: 'dairy-free', label: 'Dairy-Free' },
+                  { value: 'nut-free', label: 'Nut-Free' },
+                  { value: 'no-onion-garlic', label: 'No Onion/Garlic' },
+                ].map(({ value, label }) => (
                   <button
-                    key={restriction}
+                    key={value}
                     type="button"
-                    onClick={() => toggleRestriction(restriction)}
+                    onClick={() => toggleRestriction(value)}
                     className={`px-3 py-2 rounded-lg font-semibold text-sm transition ${
-                      dietaryRestrictions.includes(restriction)
+                      dietaryRestrictions.includes(value)
                         ? 'bg-gradient-to-r from-violet-500 to-violet-600 text-white border border-violet-400'
                         : 'bg-slate-700/50 text-slate-300 border border-slate-600 hover:border-violet-500/50'
                     }`}
                     disabled={loading}
                   >
-                    {restriction.charAt(0).toUpperCase() + restriction.slice(1)}
+                    {label}
                   </button>
                 ))}
               </div>
