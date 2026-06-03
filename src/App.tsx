@@ -111,90 +111,88 @@ function App() {
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
-        <div className="flex justify-between items-center mb-12">
+        {/* Top Navigation Bar */}
+        <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-4">
             <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full p-3 shadow-2xl">
-              <Leaf className="w-10 h-10 text-white" />
+              <Leaf className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">
+              <h1 className="text-2xl font-bold text-white">
                 {t('app.title')}
               </h1>
-              <p className="text-emerald-400 text-sm font-light">
+              <p className="text-emerald-400 text-xs font-light">
                 {t('app.subtitle')}
               </p>
             </div>
           </div>
-          <div className="flex flex-col items-end gap-3">
-            <div className="flex items-center gap-4">
-              <LanguageSelector />
-              <div className="flex gap-2 bg-slate-700/30 p-1 rounded-lg border border-slate-600">
-                <button
-                  onClick={() => { setCurrentView('scanner'); setProduct(null); }}
-                  className={`px-4 py-2 rounded font-semibold transition text-sm ${
-                    currentView === 'scanner'
-                      ? 'bg-emerald-500 text-white'
-                      : 'text-slate-300 hover:text-white'
-                  }`}
-                >
-                  <Leaf size={14} className="inline mr-1" />
-                  Scanner
-                </button>
-                <button
-                  onClick={() => { setCurrentView('diet'); setProduct(null); }}
-                  className={`px-4 py-2 rounded font-semibold transition text-sm ${
-                    currentView === 'diet'
-                      ? 'bg-emerald-500 text-white'
-                      : 'text-slate-300 hover:text-white'
-                  }`}
-                >
-                  <Apple size={14} className="inline mr-1" />
-                  Diet Plans
-                </button>
-              </div>
+          <div className="flex items-center gap-3">
+            <LanguageSelector />
+            <div className="flex gap-2 bg-slate-700/30 p-1 rounded-lg border border-slate-600">
+              <button
+                onClick={() => { setCurrentView('scanner'); setProduct(null); }}
+                className={`px-3 py-2 rounded font-semibold transition text-xs md:text-sm ${
+                  currentView === 'scanner'
+                    ? 'bg-emerald-500 text-white'
+                    : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <Leaf size={14} className="inline mr-1" />
+                Scanner
+              </button>
+              <button
+                onClick={() => { setCurrentView('diet'); setProduct(null); }}
+                className={`px-3 py-2 rounded font-semibold transition text-xs md:text-sm ${
+                  currentView === 'diet'
+                    ? 'bg-emerald-500 text-white'
+                    : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <Apple size={14} className="inline mr-1" />
+                Diet Plans
+              </button>
             </div>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 text-sm bg-gradient-to-r from-red-500/80 to-red-600/80 hover:from-red-600 hover:to-red-700 text-white rounded-lg transition duration-300 transform hover:scale-105 active:scale-95 shadow-lg border border-red-400/30"
+              className="flex items-center gap-2 px-3 py-2 text-xs md:text-sm bg-gradient-to-r from-red-500/80 to-red-600/80 hover:from-red-600 hover:to-red-700 text-white rounded-lg transition duration-300 transform hover:scale-105 active:scale-95 shadow-lg border border-red-400/30"
             >
-              <LogOut size={16} />
+              <LogOut size={14} />
               Logout
             </button>
           </div>
         </div>
 
         {/* VIP Welcome Box */}
-        <div className="mb-12 bg-gradient-to-r from-amber-600/20 via-amber-500/15 to-orange-600/20 backdrop-blur-xl rounded-2xl overflow-hidden border border-amber-500/30 shadow-2xl hover:shadow-amber-500/20 transition duration-300">
-          <div className="relative overflow-hidden p-8">
+        <div className="mb-10 bg-gradient-to-r from-amber-600/30 via-amber-500/25 to-orange-600/30 backdrop-blur-xl rounded-2xl overflow-hidden border border-amber-500/40 shadow-2xl hover:shadow-amber-500/30 transition duration-300">
+          <div className="relative overflow-hidden p-6 md:p-8">
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <div className="absolute -top-20 -right-20 w-40 h-40 bg-amber-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-              <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-orange-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-2000"></div>
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-amber-400 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-pulse"></div>
+              <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-orange-400 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-pulse delay-2000"></div>
             </div>
 
-            <div className="relative z-10 flex items-center gap-6">
+            <div className="relative z-10 flex items-center gap-4 md:gap-6">
               <div className="flex-shrink-0">
-                <div className="flex items-center justify-center w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full shadow-lg">
-                  <Crown className="w-10 h-10 text-white drop-shadow-lg" />
+                <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full shadow-lg">
+                  <Crown className="w-8 h-8 md:w-10 md:h-10 text-white drop-shadow-lg" />
                 </div>
               </div>
 
-              <div className="flex-grow">
+              <div className="flex-grow min-w-0">
                 <div className="flex items-baseline gap-2 mb-1">
-                  <span className="text-sm font-semibold text-amber-300 uppercase tracking-widest">VIP Member</span>
-                  <span className="text-amber-400/60">✨</span>
+                  <span className="text-xs md:text-sm font-semibold text-amber-300 uppercase tracking-widest">VIP Member</span>
                 </div>
-                <h2 className="text-4xl font-bold text-white mb-2">{user.name}</h2>
-                <p className="text-amber-100/80 text-sm">Welcome to your personalized health & wellness journey</p>
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-1 truncate">{user.name}</h2>
+                <p className="text-amber-100/70 text-xs md:text-sm">Premium member • Personalized wellness journey</p>
               </div>
 
-              <div className="hidden md:flex items-center gap-4">
-                <div className="bg-white/5 backdrop-blur rounded-lg p-4 border border-white/10">
-                  <p className="text-xs text-slate-400 mb-1">Your Member Status</p>
-                  <p className="text-lg font-bold text-amber-300">Premium</p>
+              <div className="hidden lg:flex items-center gap-3">
+                <div className="bg-white/5 backdrop-blur rounded-lg px-3 py-2 border border-white/10">
+                  <p className="text-xs text-slate-400">Status</p>
+                  <p className="text-sm font-bold text-amber-300">Premium</p>
                 </div>
-                <div className="bg-white/5 backdrop-blur rounded-lg p-4 border border-white/10">
-                  <p className="text-xs text-slate-400 mb-1">Joined</p>
-                  <p className="text-lg font-bold text-emerald-400">Today</p>
+                <div className="bg-white/5 backdrop-blur rounded-lg px-3 py-2 border border-white/10">
+                  <p className="text-xs text-slate-400">Access</p>
+                  <p className="text-sm font-bold text-emerald-400">Full</p>
                 </div>
               </div>
             </div>
