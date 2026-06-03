@@ -3,9 +3,10 @@ import { BarcodeScanner } from './components/BarcodeScanner';
 import { ProductDetails } from './components/ProductDetails';
 import { LoginPage } from './components/LoginPage';
 import { LanguageSelector } from './components/LanguageSelector';
+import { DietPlansPage } from './components/DietPlansPage';
 import { supabase, Product, Ingredient, User } from './lib/supabase';
 import { useLanguage } from './contexts/LanguageContext';
-import { Loader2, LogOut, Leaf } from 'lucide-react';
+import { Loader2, LogOut, Leaf, Apple } from 'lucide-react';
 
 function App() {
   const { t } = useLanguage();
@@ -15,6 +16,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [currentView, setCurrentView] = useState<'scanner' | 'diet'>('scanner');
 
   useEffect(() => {
     (async () => {
@@ -108,7 +110,7 @@ function App() {
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse delay-2000"></div>
       </div>
 
-      <div className="max-w-4xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto relative z-10">
         <div className="flex justify-between items-center mb-12">
           <div className="flex items-center gap-4">
             <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full p-3 shadow-2xl">
@@ -124,7 +126,33 @@ function App() {
             </div>
           </div>
           <div className="flex flex-col items-end gap-3">
-            <LanguageSelector />
+            <div className="flex items-center gap-4">
+              <LanguageSelector />
+              <div className="flex gap-2 bg-slate-700/30 p-1 rounded-lg border border-slate-600">
+                <button
+                  onClick={() => { setCurrentView('scanner'); setProduct(null); }}
+                  className={`px-4 py-2 rounded font-semibold transition text-sm ${
+                    currentView === 'scanner'
+                      ? 'bg-emerald-500 text-white'
+                      : 'text-slate-300 hover:text-white'
+                  }`}
+                >
+                  <Leaf size={14} className="inline mr-1" />
+                  Scanner
+                </button>
+                <button
+                  onClick={() => { setCurrentView('diet'); setProduct(null); }}
+                  className={`px-4 py-2 rounded font-semibold transition text-sm ${
+                    currentView === 'diet'
+                      ? 'bg-emerald-500 text-white'
+                      : 'text-slate-300 hover:text-white'
+                  }`}
+                >
+                  <Apple size={14} className="inline mr-1" />
+                  Diet Plans
+                </button>
+              </div>
+            </div>
             <div className="text-right">
               <p className="text-slate-300 text-xs">Welcome back</p>
               <p className="text-white font-semibold">{user.name}</p>
@@ -160,17 +188,27 @@ function App() {
           </div>
         )}
 
-        {!loading && !product && !error && (
-          <BarcodeScanner onScanSuccess={handleScanSuccess} />
+        {/* Scanner View */}
+        {currentView === 'scanner' && (
+          <>
+            {!loading && !product && !error && (
+              <BarcodeScanner onScanSuccess={handleScanSuccess} />
+            )}
+
+            {!loading && product && (
+              <ProductDetails
+                product={product}
+                ingredients={ingredients}
+                onBack={handleBack}
+                user={user}
+              />
+            )}
+          </>
         )}
 
-        {!loading && product && (
-          <ProductDetails
-            product={product}
-            ingredients={ingredients}
-            onBack={handleBack}
-            user={user}
-          />
+        {/* Diet Plans View */}
+        {currentView === 'diet' && (
+          <DietPlansPage userId={user.id} />
         )}
       </div>
     </div>
