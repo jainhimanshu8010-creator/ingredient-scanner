@@ -6,7 +6,7 @@ import { LanguageSelector } from './components/LanguageSelector';
 import { DietPlansPage } from './components/DietPlansPage';
 import { supabase, Product, Ingredient, User } from './lib/supabase';
 import { useLanguage } from './contexts/LanguageContext';
-import { Loader2, LogOut, Leaf, Apple } from 'lucide-react';
+import { Loader2, LogOut, Leaf, Apple, Crown, Heart } from 'lucide-react';
 
 function App() {
   const { t } = useLanguage();
@@ -153,10 +153,6 @@ function App() {
                 </button>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-slate-300 text-xs">Welcome back</p>
-              <p className="text-white font-semibold">{user.name}</p>
-            </div>
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 px-4 py-2 text-sm bg-gradient-to-r from-red-500/80 to-red-600/80 hover:from-red-600 hover:to-red-700 text-white rounded-lg transition duration-300 transform hover:scale-105 active:scale-95 shadow-lg border border-red-400/30"
@@ -164,6 +160,44 @@ function App() {
               <LogOut size={16} />
               Logout
             </button>
+          </div>
+        </div>
+
+        {/* VIP Welcome Box */}
+        <div className="mb-12 bg-gradient-to-r from-amber-600/20 via-amber-500/15 to-orange-600/20 backdrop-blur-xl rounded-2xl overflow-hidden border border-amber-500/30 shadow-2xl hover:shadow-amber-500/20 transition duration-300">
+          <div className="relative overflow-hidden p-8">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-amber-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+              <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-orange-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-2000"></div>
+            </div>
+
+            <div className="relative z-10 flex items-center gap-6">
+              <div className="flex-shrink-0">
+                <div className="flex items-center justify-center w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full shadow-lg">
+                  <Crown className="w-10 h-10 text-white drop-shadow-lg" />
+                </div>
+              </div>
+
+              <div className="flex-grow">
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="text-sm font-semibold text-amber-300 uppercase tracking-widest">VIP Member</span>
+                  <span className="text-amber-400/60">✨</span>
+                </div>
+                <h2 className="text-4xl font-bold text-white mb-2">{user.name}</h2>
+                <p className="text-amber-100/80 text-sm">Welcome to your personalized health & wellness journey</p>
+              </div>
+
+              <div className="hidden md:flex items-center gap-4">
+                <div className="bg-white/5 backdrop-blur rounded-lg p-4 border border-white/10">
+                  <p className="text-xs text-slate-400 mb-1">Your Member Status</p>
+                  <p className="text-lg font-bold text-amber-300">Premium</p>
+                </div>
+                <div className="bg-white/5 backdrop-blur rounded-lg p-4 border border-white/10">
+                  <p className="text-xs text-slate-400 mb-1">Joined</p>
+                  <p className="text-lg font-bold text-emerald-400">Today</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
