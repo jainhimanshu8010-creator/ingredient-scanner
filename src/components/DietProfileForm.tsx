@@ -56,17 +56,20 @@ export function DietProfileForm({ userId, onProfileCreated, onCancel }: DietProf
 
       const { data, error: dbError } = await supabase
         .from('user_diet_profiles')
-        .upsert({
-          user_id: userId,
-          weight: parseFloat(weight),
-          height: parseFloat(height),
-          body_type: bodyType,
-          health_goal: healthGoal,
-          activity_level: activityLevel,
-          dietary_restrictions: dietaryRestrictions,
-          medical_conditions: medicalConditions || null,
-          updated_at: new Date().toISOString(),
-        })
+        .upsert(
+          {
+            user_id: userId,
+            weight: parseFloat(weight),
+            height: parseFloat(height),
+            body_type: bodyType,
+            health_goal: healthGoal,
+            activity_level: activityLevel,
+            dietary_restrictions: dietaryRestrictions,
+            medical_conditions: medicalConditions || null,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'user_id' }
+        )
         .select()
         .single();
 

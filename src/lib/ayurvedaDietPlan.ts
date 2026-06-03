@@ -55,19 +55,22 @@ export async function saveDietPlan(
 ): Promise<DietPlan | null> {
   const { data, error } = await supabase
     .from('diet_plans')
-    .upsert({
-      user_id: userId,
-      diet_profile_id: profileId,
-      dosha_type: dietPlan.dosha_type,
-      daily_calories: dietPlan.daily_calories,
-      breakfast: JSON.stringify(dietPlan.breakfast),
-      lunch: JSON.stringify(dietPlan.lunch),
-      dinner: JSON.stringify(dietPlan.dinner),
-      snacks: JSON.stringify(dietPlan.snacks),
-      herbs_spices: JSON.stringify(dietPlan.herbs_spices),
-      guidelines: dietPlan.guidelines,
-      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    })
+    .upsert(
+      {
+        user_id: userId,
+        diet_profile_id: profileId,
+        dosha_type: dietPlan.dosha_type,
+        daily_calories: dietPlan.daily_calories,
+        breakfast: JSON.stringify(dietPlan.breakfast),
+        lunch: JSON.stringify(dietPlan.lunch),
+        dinner: JSON.stringify(dietPlan.dinner),
+        snacks: JSON.stringify(dietPlan.snacks),
+        herbs_spices: JSON.stringify(dietPlan.herbs_spices),
+        guidelines: dietPlan.guidelines,
+        expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+      { onConflict: 'user_id' }
+    )
     .select()
     .single();
 
